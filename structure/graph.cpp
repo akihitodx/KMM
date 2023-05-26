@@ -1,4 +1,3 @@
-#include "/types.h"
 #include "graph.h"
 #include <fstream>
 #include <iostream>
@@ -26,6 +25,7 @@ void Graph::readGraph(const string &path){
     }
     this->node_degree.resize(count_v,0);
     this->neighbor_label.resize(count_v);
+    this->node_adj.resize(count_v);
     this->vNum = count_v;
     while(!ifs.eof()){
         ifs >>id_0 >>id_1 >>e_label;

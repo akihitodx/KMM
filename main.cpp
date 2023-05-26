@@ -2,7 +2,7 @@
 #include <fstream>
 #include "structure/graph.h"
 #include "structure/index.h"
-
+#include "alg/alg.h"
 using namespace std;
 
 int main(){
@@ -13,9 +13,15 @@ int main(){
 
     string data_path = "../test/dataSet";
     Graph* data = new Graph();
-    query->readGraph(query_path);
+    data->readGraph(data_path);
 
     Index* index = new Index(query->vNum, data->vNum);
+    preProsessing(*query,*data,*index);
+    index->print_all();
+
+    updateIndex(3,2,*query,*data,*index);
+    index->print_all();
+
 
 
 

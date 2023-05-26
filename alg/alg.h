@@ -6,8 +6,7 @@
 
 void preProsessing(Graph &query, Graph &data,Index &index);
 
-
-
+void updateIndex(VertexID node, VertexID nei ,Graph &query, Graph &data, Index &index);
 
 
 
