@@ -67,5 +67,28 @@ void updateIndex(VertexID node, VertexID nei ,Graph &query, Graph &data, Index &
             index.miss_index[node][it] = tar;
         }
     }
+}
+
+void Kernel_Match(VertexID main, Graph &query, Graph &data, Index &index, Match &match, vector<vector<VertexID>> &match_table){
+    if (match.count == match.kernel_path.size()) {
+        match.res.push_back(match_table);
+        return;
+    }
+
+    VertexID is_query = match.kernel_path[match.count].first;
+    VertexID next = match.kernel_path[match.count].second;
+
+    for (auto m_id: match_table[is_query]) {
+        for (auto i: data.node_adj[m_id]) {
+            if (data.node_label[i] != query.node_label[next]  ||  index.com_index[i].find(next) == index.com_index[i].end()) {
+                continue;
+            }
+            ++match.count;
+            match_table[next].push_back(i);
+            Kernel_Match(i,query, data, index,match, match_table);
+            --match.count;
+            match_table[next].pop_back();
+        }
+    }
 
 }

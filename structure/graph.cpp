@@ -1,6 +1,9 @@
 #include "graph.h"
 #include <fstream>
 #include <iostream>
+#include <queue>
+#include <algorithm>
+
 using namespace std;
 
 void Graph::readGraph(const string &path){
@@ -52,5 +55,71 @@ void Graph::readGraph(const string &path){
         if(this->node_degree[this->max_degree_id] < i){
             this->max_degree_id = i;
         }
+    }
+
+}
+int findMax(const unordered_set<int> &adj,const vector<int> &degree){
+    int maxDegree = -1;
+    int maxId = -1;
+    for(auto i : adj){
+        if (maxDegree<degree[i]){
+            maxDegree = degree[i];
+            maxId = i;
+        }
+    }
+    return maxId;
+}
+
+void Graph::set_kernel(){
+    this->kernel = new Kernel();
+    priority_queue<pair<int&,VertexID>> queue;
+    auto degree = this->node_degree;
+    unordered_set<VertexID> adj;
+    this->kernel->kernel_set.insert(this->max_degree_id);
+    degree[max_degree_id] = -1;
+    int node_count = this->vNum - 1;
+    //初始化
+    for(VertexID node: this->node_adj[max_degree_id]){
+        if(--degree[node] == 0){
+            --node_count;
+            continue;
+        }
+        queue.emplace(degree[node],node);
+        adj.insert(node);
+    }
+    //寻找核心
+    int max_loc = -1;
+    while(node_count>0) {
+        max_loc = findMax(adj, degree);
+        this->kernel->kernel_set.insert(max_loc);
+        adj.erase(max_loc);
+        --node_count;
+        degree[max_loc] = -1;
+        for (VertexID node: this->node_adj[max_loc]) {
+            if (degree[node] < 0) continue;
+            if (--degree[node] == 0) {
+                --node_count;
+                continue;
+            }
+            if (adj.count(node) == 0) {
+                adj.insert(node);
+            }
+        }
+    }
+    //set neighbor_kernel
+    for(auto id: this->kernel->kernel_set){
+        auto nei = this->node_adj[id];
+        for(auto i:nei){
+            if(this->kernel->kernel_set.find(i)!=this->kernel->kernel_set.end()){
+                this->kernel->neighbor_kernel[id].push_back(i);
+            }
+        }
+    }
+    //set neighbor_unkernel
+    for(auto i : this->kernel->kernel_set){
+        vector<VertexID> adj_s (this->node_adj[i].begin(),this->node_adj[i].end());  //节点的所有邻居
+        vector<VertexID> ker (this->kernel->kernel_set.begin(),this->kernel->kernel_set.end());
+        sort(ker.begin(),ker.end());
+        set_difference(adj_s.begin(),adj_s.end(),ker.begin(),ker.end(), back_inserter(this->kernel->neighbor_unkernel[i]));
     }
 }

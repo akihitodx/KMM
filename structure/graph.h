@@ -32,6 +32,7 @@ public:
     map<pair<VertexLabel ,VertexLabel>,set<pair<VertexID ,VertexID>>> edge_count; // <label_a,label_b> -> {(0,1),(2,3) ...}  label_a < label_b
 public:
     void readGraph(const string &path);
+    void set_kernel();
 
 };
 

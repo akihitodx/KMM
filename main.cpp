@@ -22,6 +22,17 @@ int main(){
     updateIndex(3,2,*query,*data,*index);
     index->print_all();
 
+    query->set_kernel();
+
+    vector<vector<VertexID>> match_table;
+    match_table.resize(query->vNum);
+
+    Match* m1 = new Match();
+    m1->getPath(*query,1);
+    match_table[1].push_back(3);
+    Kernel_Match(3,*query,*data,*index,*m1,match_table);
+    m1->print_res();
+
 
 //a
 
