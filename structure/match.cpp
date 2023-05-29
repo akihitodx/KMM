@@ -15,14 +15,14 @@ void Match::print_res() {
     }
 }
 
-void Match::getPath(Graph &query, int a) {
+void Match::getPath(Graph &query, int is_query) {
     queue<VertexID> qqq;
     queue<VertexID> other;
     unordered_set<int> matched;
-    matched.insert(a);
-    for(auto i : query.kernel->neighbor_kernel[a]){
+    matched.insert(is_query);
+    for(auto i : query.kernel->neighbor_kernel[is_query]){
         qqq.push(i);
-        other.push(a);
+        other.push(is_query);
     }
     while(!qqq.empty()){
         auto temp = qqq.front();
@@ -38,14 +38,14 @@ void Match::getPath(Graph &query, int a) {
             }
         }
     }
-    getUnkernel_path(query,a);
+
 }
 
-void Match::getUnkernel_path(Graph &query, int a){
+void Match::getUnkernel_path(Graph &query, int is_query){
     queue<int> q;
     unordered_set<int> ss = query.kernel->kernel_set;
-    q.push(a);
-    ss.erase(a);
+    q.push(is_query);
+    ss.erase(is_query);
     while(!q.empty()){
         int temp = q.front();
         q.pop();
@@ -58,4 +58,22 @@ void Match::getUnkernel_path(Graph &query, int a){
 
         }
     }
+}
+void Match::set_Match(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node){
+    getPath(query,is_query);
+    getUnkernel_path(query,is_query);
+    this->match_table.resize(query.vNum);
+    this->match_table[is_query].push_back(data_node);
+
+    for(VertexID id: query.kernel->neighbor_unkernel[is_query]){
+        vector<VertexID> temp;
+        for (auto i: data.node_adj[data_node]) {
+            if (data.node_label[i] != query.node_label[id]  ||  index.com_index[i].find(id) == index.com_index[i].end()) {
+                continue;
+            }
+            temp.push_back(i);
+        }
+        this->match_table[id] = temp;
+    }
+    this->kernel_matched.insert(is_query);
 }

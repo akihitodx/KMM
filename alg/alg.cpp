@@ -69,26 +69,74 @@ void updateIndex(VertexID node, VertexID nei ,Graph &query, Graph &data, Index &
     }
 }
 
-void Kernel_Match(VertexID main, Graph &query, Graph &data, Index &index, Match &match, vector<vector<VertexID>> &match_table){
+void Kernel_Match(Graph &query, Graph &data, Index &index, Match &match){
     if (match.count == match.kernel_path.size()) {
-        match.res.push_back(match_table);
+        match.res.push_back(match.match_table);
         return;
     }
 
     VertexID is_query = match.kernel_path[match.count].first;
     VertexID next = match.kernel_path[match.count].second;
 
-    for (auto m_id: match_table[is_query]) {
+
+
+    for (auto m_id: match.match_table[is_query]) {
         for (auto i: data.node_adj[m_id]) {
             if (data.node_label[i] != query.node_label[next]  ||  index.com_index[i].find(next) == index.com_index[i].end()) {
                 continue;
             }
+            auto old_match = match.match_table;
             ++match.count;
-            match_table[next].push_back(i);
-            Kernel_Match(i,query, data, index,match, match_table);
-            --match.count;
-            match_table[next].pop_back();
+            match.match_table[next].push_back(i);
+
+
+            bool flag = false;
+            if(match.kernel_matched.count(next) == 0 ){
+                flag = unKernel_Match(next,i,query,data,index,match);
+
+            }
+            if(flag){
+                match.kernel_matched.insert(next);
+                Kernel_Match(query, data, index,match);
+                match.kernel_matched.erase(next);
+                --match.count;
+                match.match_table = old_match;
+            } else{
+                --match.count;
+                match.match_table[next].pop_back();
+            }
+
+
+
         }
     }
 
+}
+
+bool unKernel_Match(VertexID is_query,VertexID data_node, Graph &query, Graph &data, Index &index, Match &match){
+    auto unkernel_set = query.kernel->neighbor_unkernel[is_query];
+    for(VertexID qid: unkernel_set){
+        vector<VertexID> temp;
+        for (auto i: data.node_adj[data_node]) {
+            if (data.node_label[i] != query.node_label[qid] ||
+                index.com_index[i].find(qid) == index.com_index[i].end()) {
+                continue;
+            }
+            temp.push_back(i);
+        }
+        if (match.match_table[qid].empty()) {
+            match.match_table[qid] = temp;
+        } else {
+            vector<int> change;
+            set_intersection(match.match_table[qid].begin(), match.match_table[qid].end(), temp.begin(),
+                             temp.end(), back_inserter(change));
+            if (change.empty()) {
+                return false;
+            } else{
+                match.match_table[qid] = {change.begin(),change.end()};
+                return true;
+            }
+        }
+
+    }
 }
