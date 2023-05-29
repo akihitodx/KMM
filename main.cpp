@@ -1,16 +1,21 @@
 #include <iostream>
 #include <fstream>
+#include <ctime>
 #include "structure/graph.h"
 #include "structure/index.h"
 #include "alg/alg.h"
 using namespace std;
 
 int main(){
+    clock_t begin,end;
+    double elapsedTime;
+
+
 //    string path = "../test/insert/query_graph/Q_0";
     string query_path = "../test/querySet";
     Graph* query = new Graph();
     query->readGraph(query_path);
-
+    query->set_kernel();
     string data_path = "../test/dataSet";
     Graph* data = new Graph();
     data->readGraph(data_path);
@@ -19,32 +24,41 @@ int main(){
     preProsessing(*query,*data,*index);
     index->print_all();
 
+    begin = clock();
     updateIndex(3,2,*query,*data,*index);
     updateIndex(2,3,*query,*data,*index);
-    index->print_all();
-
-    query->set_kernel();
-
-
     Match* m1 = new Match();
     m1->set_Match(*query,*data,*index,1,3);
-//    m1->getPath(*query,1);
-//    match_table[1].push_back(3);
     Kernel_Match(*query,*data,*index,*m1);
+
+    end = clock();
+    elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
+    cout<<"elapsedTime:"<<elapsedTime<<endl;
     m1->print_res();
 
+
+    begin = clock();
     updateIndex(6,13,*query,*data,*index);
     updateIndex(13,6,*query,*data,*index);
     Match* m2 = new Match();
     m2->set_Match(*query,*data,*index,2,6);
     Kernel_Match(*query,*data,*index,*m2);
+
+    end = clock();
+    elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
+    cout<<"elapsedTime:"<<elapsedTime<<endl;
     m2->print_res();
-cout<<"!!!!!!!!!!!!!!!!!!!!"<<endl;
+
+    begin = clock();
     updateIndex(11,12,*query,*data,*index);
     updateIndex(12,11,*query,*data,*index);
     Match* m3 = new Match();
     m3->set_Match(*query,*data,*index,4,11);
     Kernel_Match(*query,*data,*index,*m3);
+
+    end = clock();
+    elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
+    cout<<"elapsedTime:"<<elapsedTime<<endl;
     m3->print_res();
 
 //a
