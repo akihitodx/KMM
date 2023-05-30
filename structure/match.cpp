@@ -77,25 +77,26 @@ void Match::getPath(Graph &query, VertexID is_query,VertexID another) {
 
 }
 
-void Match::getUnkernel_path(Graph &query, int is_query){
-    queue<int> q;
-    unordered_set<int> ss = query.kernel->kernel_set;
-    q.push(is_query);
-    ss.erase(is_query);
-    while(!q.empty()){
-        int temp = q.front();
-        q.pop();
-        unkernel_path.push_back(temp);
-        for(auto i: query.kernel->neighbor_kernel[temp]){
-            if(ss.find(i) != ss.end()){
-                q.push(i);
-                ss.erase(i);
-            }
+//void Match::getUnkernel_path(Graph &query, int is_query){
+//    queue<int> q;
+//    unordered_set<int> ss = query.kernel->kernel_set;
+//    q.push(is_query);
+//    ss.erase(is_query);
+//    while(!q.empty()){
+//        int temp = q.front();
+//        q.pop();
+//        unkernel_path.push_back(temp);
+//        for(auto i: query.kernel->neighbor_kernel[temp]){
+//            if(ss.find(i) != ss.end()){
+//                q.push(i);
+//                ss.erase(i);
+//            }
+//
+//        }
+//    }
+//}
 
-        }
-    }
-}
-void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel){
+bool Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel){
     getPath(query,is_query);
 //    getUnkernel_path(query,is_query);
     this->match_table.resize(query.vNum);
@@ -112,21 +113,25 @@ void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_q
 //        this->match_table[id] = temp;
 //    }
 
-    unKernel_Match(is_query,data_node,query,data,index,*this);
-
+    auto flag = unKernel_Match(is_query,data_node,query,data,index,*this);
+    if(!flag) return flag;
     this->match_table[is_query_unkernel] = {data_node_unkernel};
     this->kernel_matched.insert(is_query);
+    return flag;
 }
 
-void Match::set_Match_double(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_another, VertexID data_node_another){
+bool Match::set_Match_double(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_another, VertexID data_node_another){
     getPath(query,is_query,is_query_another);
     this->match_table.resize(query.vNum);
     this->match_table[is_query].push_back(data_node);
     this->match_table[is_query_another].push_back(data_node_another);
 
-    unKernel_Match(is_query,data_node,query,data,index,*this);
+    auto flag = unKernel_Match(is_query,data_node,query,data,index,*this);
+    if(!flag) return flag;
     this->kernel_matched.insert(is_query);
 
-    unKernel_Match(is_query_another,data_node_another,query,data,index,*this);
+    flag = unKernel_Match(is_query_another,data_node_another,query,data,index,*this);
+    if(!flag) return flag;
     this->kernel_matched.insert(is_query_another);
+    return flag;
 }

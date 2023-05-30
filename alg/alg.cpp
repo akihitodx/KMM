@@ -137,3 +137,87 @@ bool unKernel_Match(VertexID is_query,VertexID data_node, Graph &query, Graph &d
     }
     return true;
 }
+
+void subgraph_Match(VertexID left_node,VertexID right_node,Graph &query,Graph &data, Index &index, Match &match){
+    VertexLabel left_label = data.node_label[left_node];
+    VertexLabel right_label = data.node_label[right_node];
+//    if(data.node_label[left_node]==data.node_label[right_node]){
+//        //考虑等价->同构
+//    }
+    int flag=0;
+    set<pair<VertexID,VertexID>> match_edge;
+    auto it = query.edge_count.find({left_label,right_label});
+    if(it != query.edge_count.end()){
+        flag = 1;
+        match_edge = it->second;
+    } else{
+        it = query.edge_count.find({right_label,left_label});
+        if(it != query.edge_count.end()){
+            flag = -1;
+            match_edge = it->second;
+        } else{
+            return;
+        }
+    }
+    vector<pair<VertexID , VertexID>> should_match;
+    auto com_left = index.com_index[left_node];
+    auto com_right = index.com_index[right_node];
+    if(flag==1){
+        for(auto edge: match_edge){
+            if (com_left.find(edge.first) != com_left.end() && com_right.find(edge.second) != com_right.end()) {
+                should_match.emplace_back(edge);
+            }
+        }
+        for(auto edge: should_match){
+            bool left_is_kernel = query.kernel->kernel_set.find(edge.first) != query.kernel->kernel_set.end();
+            bool right_is_kernel = query.kernel->kernel_set.find(edge.second) != query.kernel->kernel_set.end();
+            bool ff;
+            if(left_is_kernel && right_is_kernel){
+                ff = match.set_Match_double(query,data,index,edge.first,left_node,edge.second,right_node);
+                if(!ff) continue;
+                Kernel_Match(query,data,index,match);
+            } else{
+                if(left_is_kernel){
+                    ff = match.set_Match_single(query,data,index,edge.first,left_node,edge.second,right_node);
+                    if(!ff) continue;
+                    Kernel_Match(query,data,index,match);
+                } else{
+                    ff = match.set_Match_single(query,data,index,edge.second,right_node,edge.first,left_node);
+                    if(!ff) continue;
+                    Kernel_Match(query,data,index,match);
+                }
+            }
+        }
+    }else{
+        for(auto edge: match_edge){
+            if (com_left.find(edge.second) != com_left.end() && com_right.find(edge.first) != com_right.end()) {
+                should_match.emplace_back(edge);
+            }
+        }
+        for(auto edge: should_match){
+            bool left_is_kernel = query.kernel->kernel_set.find(edge.second) != query.kernel->kernel_set.end();
+            bool right_is_kernel = query.kernel->kernel_set.find(edge.first) != query.kernel->kernel_set.end();
+            bool ff;
+            if(left_is_kernel && right_is_kernel){
+                ff = match.set_Match_double(query,data,index,edge.second,left_node,edge.first,right_node);
+                if(!ff) continue;
+                Kernel_Match(query,data,index,match);
+            } else{
+                if(left_is_kernel){
+                    ff = match.set_Match_single(query,data,index,edge.second,left_node,edge.first,right_node);
+                    if(!ff) continue;
+                    Kernel_Match(query,data,index,match);
+                } else{
+                    ff = match.set_Match_single(query,data,index,edge.first,right_node,edge.second,left_node);
+                    if(!ff) continue;
+                    Kernel_Match(query,data,index,match);
+                }
+            }
+        }
+    }
+
+}
+
+void do_func(Graph &query, Graph &data,Index &index){
+
+}
