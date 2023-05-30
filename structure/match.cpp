@@ -94,7 +94,7 @@ void Match::getUnkernel_path(Graph &query, int is_query){
         }
     }
 }
-void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node){
+void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel){
     getPath(query,is_query);
     getUnkernel_path(query,is_query);
     this->match_table.resize(query.vNum);
@@ -110,6 +110,9 @@ void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_q
         }
         this->match_table[id] = temp;
     }
+
+
+    this->match_table[is_query_unkernel] = {data_node_unkernel};
     this->kernel_matched.insert(is_query);
 }
 

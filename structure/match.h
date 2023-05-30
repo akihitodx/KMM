@@ -16,7 +16,7 @@ public:
     vector<vector<VertexID>> match_table;
     unordered_set<VertexID> kernel_matched;
 public:
-    void set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node);
+    void set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel);
     void set_Match_double(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_another, VertexID data_node_another);
     void getPath(Graph &query,VertexID a);
     void getPath(Graph &query,VertexID a,VertexID b);
