@@ -4,4 +4,4 @@ project(KMM)
 set(CMAKE_CXX_STANDARD 14)
 
 add_executable(KMM
-        main.cpp test/alg.cpp test/alg.h structure/graph.cpp structure/graph.h types.h structure/match.cpp structure/match.h structure/index.cpp structure/index.h alg/alg.cpp alg/alg.h)
+        main.cpp  structure/graph.cpp structure/graph.h types.h structure/match.cpp structure/match.h structure/index.cpp structure/index.h alg/alg.cpp alg/alg.h)
