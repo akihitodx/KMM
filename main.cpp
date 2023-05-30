@@ -42,6 +42,7 @@ int main(){
     updateIndex(13,6,*query,*data,*index);
     Match* m2 = new Match();
     m2->set_Match_single(*query,*data,*index,2,6,3,13);
+//    m2->set_Match_double(*query,*data,*index,2,6,4,13);
     Kernel_Match(*query,*data,*index,*m2);
 
     end = clock();
@@ -61,7 +62,7 @@ int main(){
     cout<<"elapsedTime:"<<elapsedTime<<endl;
     m3->print_res();
 
-//a
+
 
 
 

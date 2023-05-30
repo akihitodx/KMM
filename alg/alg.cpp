@@ -124,19 +124,16 @@ bool unKernel_Match(VertexID is_query,VertexID data_node, Graph &query, Graph &d
             }
             temp.push_back(i);
         }
+        if(temp.empty()) return false;
         if (match.match_table[qid].empty()) {
             match.match_table[qid] = temp;
         } else {
             vector<int> change;
             set_intersection(match.match_table[qid].begin(), match.match_table[qid].end(), temp.begin(),
                              temp.end(), back_inserter(change));
-            if (change.empty()) {
-                return false;
-            } else{
-                match.match_table[qid] = {change.begin(),change.end()};
-                return true;
-            }
+            if (change.empty()) return false;
+            match.match_table[qid] = {change.begin(),change.end()};
         }
-
     }
+    return true;
 }

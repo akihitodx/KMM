@@ -1,4 +1,5 @@
 #include "match.h"
+#include "../alg/alg.h"
 #include <iostream>
 #include <queue>
 #include <algorithm>
@@ -96,21 +97,22 @@ void Match::getUnkernel_path(Graph &query, int is_query){
 }
 void Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel){
     getPath(query,is_query);
-    getUnkernel_path(query,is_query);
+//    getUnkernel_path(query,is_query);
     this->match_table.resize(query.vNum);
     this->match_table[is_query].push_back(data_node);
 
-    for(VertexID id: query.kernel->neighbor_unkernel[is_query]){
-        vector<VertexID> temp;
-        for (auto i: data.node_adj[data_node]) {
-            if (data.node_label[i] != query.node_label[id]  ||  index.com_index[i].find(id) == index.com_index[i].end()) {
-                continue;
-            }
-            temp.push_back(i);
-        }
-        this->match_table[id] = temp;
-    }
+//    for(VertexID id: query.kernel->neighbor_unkernel[is_query]){
+//        vector<VertexID> temp;
+//        for (auto i: data.node_adj[data_node]) {
+//            if (data.node_label[i] != query.node_label[id]  ||  index.com_index[i].find(id) == index.com_index[i].end()) {
+//                continue;
+//            }
+//            temp.push_back(i);
+//        }
+//        this->match_table[id] = temp;
+//    }
 
+    unKernel_Match(is_query,data_node,query,data,index,*this);
 
     this->match_table[is_query_unkernel] = {data_node_unkernel};
     this->kernel_matched.insert(is_query);
@@ -122,29 +124,9 @@ void Match::set_Match_double(Graph &query,Graph &data,Index &index,VertexID is_q
     this->match_table[is_query].push_back(data_node);
     this->match_table[is_query_another].push_back(data_node_another);
 
-    for(VertexID id: query.kernel->neighbor_unkernel[is_query]){
-        vector<VertexID> temp;
-        for (auto i: data.node_adj[data_node]) {
-            if (data.node_label[i] != query.node_label[id]  ||  index.com_index[i].find(id) == index.com_index[i].end()) {
-                continue;
-            }
-            temp.push_back(i);
-        }
-        this->match_table[id] = temp;
-    }
+    unKernel_Match(is_query,data_node,query,data,index,*this);
     this->kernel_matched.insert(is_query);
 
-    for(VertexID id: query.kernel->neighbor_unkernel[is_query_another]){
-        vector<VertexID> temp;
-        for (auto i: data.node_adj[data_node]) {
-            if (data.node_label[i] != query.node_label[id]  ||  index.com_index[i].find(id) == index.com_index[i].end()) {
-                continue;
-            }
-            temp.push_back(i);
-        }
-        this->match_table[id] = temp;
-    }
-    this->kernel_matched.insert(is_query);
-
-
+    unKernel_Match(is_query_another,data_node_another,query,data,index,*this);
+    this->kernel_matched.insert(is_query_another);
 }
