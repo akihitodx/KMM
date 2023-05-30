@@ -1,5 +1,4 @@
 #include "alg.h"
-#include <algorithm>
 
 bool com_Match(multiset<int> &queryNode,multiset<int> &dataNode){
     // dataNode 包含 querNode
@@ -168,7 +167,7 @@ void subgraph_Match(VertexID left_node,VertexID right_node,Graph &query,Graph &d
                 should_match.emplace_back(edge);
             }
         }
-        for(auto edge: should_match){
+         for(auto edge: should_match){
             bool left_is_kernel = query.kernel->kernel_set.find(edge.first) != query.kernel->kernel_set.end();
             bool right_is_kernel = query.kernel->kernel_set.find(edge.second) != query.kernel->kernel_set.end();
             bool ff;
@@ -218,6 +217,17 @@ void subgraph_Match(VertexID left_node,VertexID right_node,Graph &query,Graph &d
 
 }
 
-void do_func(Graph &query, Graph &data,Index &index){
-
+void do_func(VertexID a,VertexID b,Graph &query, Graph &data,Index &index){
+    clock_t begin,end;
+    double elapsedTime;
+    begin = clock();
+    updateIndex(a,b,query,data,index);
+    updateIndex(b,a,query,data,index);
+    Match *match = new Match();
+    subgraph_Match(a,b,query,data,index,*match);
+    end = clock();
+    elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
+    cout<<"elapsedTime:"<<elapsedTime<<endl;
+    match->print_res();
+    delete match;
 }

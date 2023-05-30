@@ -19,6 +19,7 @@ void Match::print_res() {
 }
 
 void Match::getPath(Graph &query, VertexID is_query) {
+    kernel_path.clear();
     queue<VertexID> qqq;
     queue<VertexID> other;
     unordered_set<int> matched;
@@ -45,6 +46,7 @@ void Match::getPath(Graph &query, VertexID is_query) {
 }
 
 void Match::getPath(Graph &query, VertexID is_query,VertexID another) {
+    kernel_path.clear();
     queue<VertexID> qqq;
     queue<VertexID> other;
     unordered_set<int> matched;
@@ -99,6 +101,7 @@ void Match::getPath(Graph &query, VertexID is_query,VertexID another) {
 bool Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_unkernel,VertexID data_node_unkernel){
     getPath(query,is_query);
 //    getUnkernel_path(query,is_query);
+    this->match_table.clear();
     this->match_table.resize(query.vNum);
     this->match_table[is_query].push_back(data_node);
 
@@ -122,6 +125,7 @@ bool Match::set_Match_single(Graph &query,Graph &data,Index &index,VertexID is_q
 
 bool Match::set_Match_double(Graph &query,Graph &data,Index &index,VertexID is_query,VertexID data_node,VertexID is_query_another, VertexID data_node_another){
     getPath(query,is_query,is_query_another);
+    this->match_table.clear();
     this->match_table.resize(query.vNum);
     this->match_table[is_query].push_back(data_node);
     this->match_table[is_query_another].push_back(data_node_another);

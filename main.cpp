@@ -24,13 +24,32 @@ int main(){
     preProsessing(*query,*data,*index);
     index->print_all();
 
+    do_func(2,3,*query,*data,*index);
+    do_func(6,13,*query,*data,*index);
+    do_func(11,12,*query,*data,*index);
+
+
+
+    delete query;
+    delete data;
+    delete index;
+
+
+
+
+
+    return 0;
     begin = clock();
     updateIndex(3,2,*query,*data,*index);
     updateIndex(2,3,*query,*data,*index);
     Match* m1 = new Match();
-    flag = m1->set_Match_single(*query,*data,*index,1,3,0,2);
-    if(!flag) return 3;
-    Kernel_Match(*query,*data,*index,*m1);
+
+    subgraph_Match(2,3,*query,*data,*index,*m1);
+
+//    flag = m1->set_Match_single(*query,*data,*index,1,3,0,2);
+//    if(!flag) return 3;
+//
+//    Kernel_Match(*query,*data,*index,*m1);
 
     end = clock();
     elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
@@ -42,10 +61,13 @@ int main(){
     updateIndex(6,13,*query,*data,*index);
     updateIndex(13,6,*query,*data,*index);
     Match* m2 = new Match();
-    flag = m2->set_Match_single(*query,*data,*index,2,6,3,13);
-//    m2->set_Match_double(*query,*data,*index,2,6,4,13);
-    if(!flag) return 3;
-    Kernel_Match(*query,*data,*index,*m2);
+
+    subgraph_Match(6,13,*query,*data,*index,*m2);
+
+//    flag = m2->set_Match_single(*query,*data,*index,2,6,3,13);
+////    m2->set_Match_double(*query,*data,*index,2,6,4,13);
+//    if(!flag) return 3;
+//    Kernel_Match(*query,*data,*index,*m2);
 
     end = clock();
     elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
@@ -56,9 +78,12 @@ int main(){
     updateIndex(11,12,*query,*data,*index);
     updateIndex(12,11,*query,*data,*index);
     Match* m3 = new Match();
-    flag = m3->set_Match_single(*query,*data,*index,4,11,3,12);
-    if(!flag) return 3;
-    Kernel_Match(*query,*data,*index,*m3);
+
+    subgraph_Match(11,12,*query,*data,*index,*m3);
+
+//    flag = m3->set_Match_single(*query,*data,*index,4,11,3,12);
+//    if(!flag) return 3;
+//    Kernel_Match(*query,*data,*index,*m3);
 
     end = clock();
     elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
