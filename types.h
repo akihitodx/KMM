@@ -1,6 +1,3 @@
-//
-// Created by DELL on 2023/5/26.
-//
 
 #ifndef KMM_TYPES_H
 #define KMM_TYPES_H
