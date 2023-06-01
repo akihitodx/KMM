@@ -37,7 +37,6 @@ void preProsessing(Graph &query, Graph &data,Index &index){
                     index.error_index[data_node].insert(query_node);
                 }
             }
-
         }
     }
 }
@@ -73,12 +72,8 @@ void Kernel_Match(Graph &query, Graph &data, Index &index, Match &match){
         match.res.push_back(match.match_table);
         return;
     }
-
     VertexID is_query = match.kernel_path[match.count].first;
     VertexID next = match.kernel_path[match.count].second;
-
-
-
     for (auto m_id: match.match_table[is_query]) {
         for (auto i: data.node_adj[m_id]) {
             if (data.node_label[i] != query.node_label[next]  ||  index.com_index[i].find(next) == index.com_index[i].end()) {
@@ -87,8 +82,6 @@ void Kernel_Match(Graph &query, Graph &data, Index &index, Match &match){
             auto old_match = match.match_table;
             ++match.count;
             match.match_table[next].push_back(i);
-
-
             bool flag = false;
             if(match.kernel_matched.count(next) == 0 ){
                 flag = unKernel_Match(next,i,query,data,index,match);
@@ -217,7 +210,7 @@ void subgraph_Match(VertexID left_node,VertexID right_node,Graph &query,Graph &d
 
 }
 
-void do_func(VertexID a,VertexID b,Graph &query, Graph &data,Index &index){
+bool do_func(VertexID a,VertexID b,Graph &query, Graph &data,Index &index){
     clock_t begin,end;
     double elapsedTime;
     begin = clock();
@@ -228,6 +221,13 @@ void do_func(VertexID a,VertexID b,Graph &query, Graph &data,Index &index){
     end = clock();
     elapsedTime = static_cast<double>(end-begin) / CLOCKS_PER_SEC;
     cout<<"elapsedTime:"<<elapsedTime<<endl;
-    match->print_res();
-    delete match;
+    if(!match->res.empty()){
+        delete match;
+        return true;
+    } else{
+        delete match;
+        return false;
+    }
+//    match->print_res();
+
 }
