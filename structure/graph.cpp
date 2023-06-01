@@ -51,8 +51,9 @@ void Graph::readGraph(const string &path){
     }
     ifs.close();
     this->eNum = count_e;
-    for(auto i : this->node_degree){
-        if(this->node_degree[this->max_degree_id] < i){
+
+    for(int i = 0;i< this->vNum;++i){
+        if(this->node_degree[this->max_degree_id] < this->node_degree[i]){
             this->max_degree_id = i;
         }
     }
